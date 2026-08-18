@@ -340,7 +340,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
       if !self.isSleep {
         let dispatchedReconfigureID = self.reconfigureID
         os_log("Displays to be reconfigured with reconfigureID %{public}@", type: .info, String(dispatchedReconfigureID))
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
           self.displayReconfiguration(dispatchedReconfigureID: dispatchedReconfigureID)
         }
       }

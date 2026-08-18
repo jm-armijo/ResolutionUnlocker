@@ -65,19 +65,29 @@ class VirtualDisplayManager {
   }
 
   static func connectDisconnectAssociated() {
+    var didChange = false
     for virtualDisplay in self.getAll() {
       if virtualDisplay.hasAssociatedDisplay() {
         if DisplayManager.getDisplayByPrefsId(virtualDisplay.associatedDisplayPrefsId) != nil {
           if !virtualDisplay.isConnected {
             os_log("Connecting associated virtual display %{public}@ for display %{public}@", type: .info, virtualDisplay.getName(), virtualDisplay.associatedDisplayPrefsId)
+            app.skipReconfiguration = true
             _ = virtualDisplay.connect()
+            didChange = true
           }
         } else {
           if virtualDisplay.isConnected {
             os_log("Disconnecting associated virtual display %{public}@ for lack of display %{public}@", type: .info, virtualDisplay.getName(), virtualDisplay.associatedDisplayPrefsId)
+            app.skipReconfiguration = true
             virtualDisplay.disconnect()
+            didChange = true
           }
         }
+      }
+    }
+    if didChange {
+      DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+        app.skipReconfiguration = false
       }
     }
   }
